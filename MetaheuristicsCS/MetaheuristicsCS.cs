@@ -339,6 +339,7 @@ namespace MetaheuristicsCS
             Lab8MOMaxCut(seed);
             Lab8MOKnapsack(seed);
 
+            /*
             Lab5(seed);
 
             Lab4Max3SAT(seed);
@@ -362,6 +363,7 @@ namespace MetaheuristicsCS
             Lab1BimodalDeceptiveConcatenation(seed);
             Lab1IsingSpinGlass(seed);
             Lab1NkLandscapes(seed);
+            */
 
             Console.ReadKey();
         }
