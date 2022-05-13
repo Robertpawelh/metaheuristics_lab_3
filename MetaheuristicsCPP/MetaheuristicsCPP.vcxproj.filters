@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Optimizers">
+      <UniqueIdentifier>{212c86ef-40cb-41b2-bbba-61663c0ebc69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StopConditions">
+      <UniqueIdentifier>{24e4788d-6059-49a4-be33-221ba5ed1ec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{25fb0f09-feb8-4281-9d66-9c94bb66b7c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Optimizers">
+      <UniqueIdentifier>{e024798e-32c0-4f89-aa64-182d8420a084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{5998dff4-c0fc-410e-b319-53aa49fefe3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StopConditions">
+      <UniqueIdentifier>{51ff11dc-6ddb-4065-96c5-46afcd4f30b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mutations">
+      <UniqueIdentifier>{40522be9-45b6-479d-8bfb-f9c988f0d749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mutations">
+      <UniqueIdentifier>{b75a193e-9956-45fa-9098-bee0daf830d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Generators">
+      <UniqueIdentifier>{d951b9bf-1c36-47d8-8dfd-398b3331ef3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Generators">
+      <UniqueIdentifier>{a10c7a94-d0bd-47f4-96d0-fc52451e4465}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Crossovers">
+      <UniqueIdentifier>{27cd31c7-760d-4fa7-8b34-daf9a1202170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Selections">
+      <UniqueIdentifier>{80d50653-177e-4c9c-803d-f0811a55ba0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Crossovers">
+      <UniqueIdentifier>{b0f0610b-994c-4911-8fe8-7c76203d57a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Selections">
+      <UniqueIdentifier>{e23d85af-26b1-4b6d-80aa-16c763bc0b66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Optimizers\SingleObjective">
+      <UniqueIdentifier>{9d977aec-50dc-4d93-9b54-6f5b789385b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DominationComparers">
+      <UniqueIdentifier>{f46d0a44-8ce0-4939-bcab-1b9c0c0f79b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DominationComparers">
+      <UniqueIdentifier>{217092f2-4684-47e9-a599-2a4205b28d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Optimizers\BiObjective">
+      <UniqueIdentifier>{4b2324ab-6789-4c8f-926d-a1a4f81eb5d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Optimizers\BiObjective">
+      <UniqueIdentifier>{c0879700-544c-42ea-b873-063066b76171}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Optimizers\SingleObjective">
+      <UniqueIdentifier>{0e5f4cee-4c27-40bd-9c29-3ccca8fd1ff1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeUtils.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="StopConditions.cpp">
+      <Filter>Source Files\StopConditions</Filter>
+    </ClCompile>
+    <ClCompile Include="RealMutations.cpp">
+      <Filter>Source Files\Mutations</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryMutations.cpp">
+      <Filter>Source Files\Mutations</Filter>
+    </ClCompile>
+    <ClCompile Include="RealMutationES11Adaptations.cpp">
+      <Filter>Source Files\Mutations</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryGenerators.cpp">
+      <Filter>Source Files\Generators</Filter>
+    </ClCompile>
+    <ClCompile Include="RealGenerators.cpp">
+      <Filter>Source Files\Generators</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryCrossovers.cpp">
+      <Filter>Source Files\Crossovers</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryKnapsackSelection.cpp">
+      <Filter>Source Files\Selections</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryKnapsackSelections.cpp">
+      <Filter>Source Files\Selections</Filter>
+    </ClCompile>
+    <ClCompile Include="DominationComparers.cpp">
+      <Filter>Source Files\DominationComparers</Filter>
+    </ClCompile>
+    <ClCompile Include="ParetoFront.cpp">
+      <Filter>Source Files\Optimizers\BiObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryGeneticAlgorithm.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryKnapsackGeneticAlgorithm.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryKnapsackIndividual.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryRandomSearch.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="RealCMAES.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="RealEvolutionStrategy11.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="RealRandomSearch.cpp">
+      <Filter>Source Files\Optimizers\SingleObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryBiObjectiveGeneticAlgorithm.cpp">
+      <Filter>Source Files\Optimizers\BiObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryNSGA2.cpp">
+      <Filter>Source Files\Optimizers\BiObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryNSGA2Ranking.cpp">
+      <Filter>Source Files\Optimizers\BiObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryNSGA2Individual.cpp">
+      <Filter>Source Files\Optimizers\BiObjective</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryNSGA2Selection.cpp">
+      <Filter>Source Files\Selections</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StopCondition.h">
+      <Filter>Header Files\StopConditions</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>Header Files\Optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="StopConditions.h">
+      <Filter>Header Files\StopConditions</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutation.h">
+      <Filter>Header Files\Mutations</Filter>
+    </ClInclude>
+    <ClInclude Include="RealMutations.h">
+      <Filter>Header Files\Mutations</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryMutations.h">
+      <Filter>Header Files\Mutations</Filter>
+    </ClInclude>
+    <ClInclude Include="PopulationOptimizer.h">
+      <Filter>Header Files\Optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorUtils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RealMutationES11Adaptation.h">
+      <Filter>Header Files\Mutations</Filter>
+    </ClInclude>
+    <ClInclude Include="RealMutationES11Adaptations.h">
+      <Filter>Header Files\Mutations</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryGenerators.h">
+      <Filter>Header Files\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="RealGenerators.h">
+      <Filter>Header Files\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="Generator.h">
+      <Filter>Header Files\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="Crossover.h">
+      <Filter>Header Files\Crossovers</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryCrossovers.h">
+      <Filter>Header Files\Crossovers</Filter>
+    </ClInclude>
+    <ClInclude Include="Selection.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+    <ClInclude Include="Selections.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryKnapsackSelection.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryKnapsackSelections.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneticAlgorithm.h">
+      <Filter>Header Files\Optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="ParetoFront.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="Individual.h">
+      <Filter>Header Files\Optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleObjectiveOptimizationState.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="OptimizationState.h">
+      <Filter>Header Files\Optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleObjectiveOptimizationResult.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="DominationComparer.h">
+      <Filter>Header Files\DominationComparers</Filter>
+    </ClInclude>
+    <ClInclude Include="DominationComparers.h">
+      <Filter>Header Files\DominationComparers</Filter>
+    </ClInclude>
+    <ClInclude Include="BiObjectiveSelections.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+    <ClInclude Include="BiObjectiveOptimizationResult.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BiObjectiveOptimizationState.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryBiObjectiveGeneticAlgorithm.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryGeneticAlgorithm.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryKnapsackGeneticAlgorithm.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryKnapsackIndividual.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryRandomSearch.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="RealCMAES.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="RealEvolutionStrategy11.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="RealRandomSearch.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplingOptimizer.h">
+      <Filter>Header Files\Optimizers\SingleObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryNSGA2.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryNSGA2Ranking.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryNSGA2Individual.h">
+      <Filter>Header Files\Optimizers\BiObjective</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryNSGA2Selection.h">
+      <Filter>Header Files\Selections</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
