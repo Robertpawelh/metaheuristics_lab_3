@@ -87,6 +87,10 @@
     <Compile Include="Mutations\EvolutionaryStrategy11\RealNullRealMutationES11Adaptation.cs" />
     <Compile Include="Mutations\EvolutionaryStrategy11\RealOneFifthRuleMutationES11Adaptation.cs" />
     <Compile Include="Optimizers\BiObjective\GeneticAlgorithm.cs" />
+    <Compile Include="Optimizers\BiObjective\Lista8\GeneticAlgorithmLista8.cs" />
+    <Compile Include="Optimizers\BiObjective\Lista8\GeneticAlgorithmPierwszy.cs" />
+    <Compile Include="Optimizers\BiObjective\Lista8\SkrajniSelection.cs" />
+    <Compile Include="Optimizers\BiObjective\Lista8\SkrajniSelectionDwa.cs" />
     <Compile Include="Optimizers\BiObjective\NSGA2\Individual.cs" />
     <Compile Include="Optimizers\BiObjective\NSGA2\NSGA2.cs" />
     <Compile Include="Optimizers\BiObjective\NSGA2\Ranking.cs" />

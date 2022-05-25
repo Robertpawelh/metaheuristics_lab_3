@@ -125,9 +125,7 @@ namespace Optimizers.BiObjective.NSGA2
         {
             UpdateCrowdingDistanceFirstObjective(currentParetoFront);
             UpdateCrowdingDistanceSecondObjective(currentParetoFront);
-        }
-
-        private void UpdateCrowdingDistanceFirstObjective(List<Individual<Element>> currentParetoFront)
+        }        private void UpdateCrowdingDistanceFirstObjective(List<Individual<Element>> currentParetoFront)
         {
             currentParetoFront.Sort((x, y) => (int)(x.Fitness.Item1 - y.Fitness.Item1));
 

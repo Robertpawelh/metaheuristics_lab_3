@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-
+using System.Text;
 using Crossovers;
 using DominationComparers.BiObjective;
 using EvaluationsCLI;
 using Generators;
+using MetaheuristicsCS.Optimizers.BiObjective.Lista8;
 using Mutations;
 using Optimizers.SingleObjective;
 using Selections;
@@ -20,6 +22,8 @@ namespace MetaheuristicsCS
 {
     class MetaheuristicsCS
     {
+
+        /* Raport 2 code */
         private static void ReportOptimizationResult<Element>(OptimizationResult<Element> optimizationResult)
         {
             Console.WriteLine("value: {0}", optimizationResult.BestValue);
@@ -28,101 +32,25 @@ namespace MetaheuristicsCS
             Console.WriteLine("\twhen (FFE): {0}", optimizationResult.BestFFE);
         }
 
-        private static void ReportBiObjectiveOptimizationResult<Element>(BiObjective.OptimizationResult<Element> optimizationResult)
+        private static void SaveProblemParams<Element>(int zadId, string problemName, int genes, IEvaluation<bool, Tuple<double, double>> evaluation)
         {
-            Console.WriteLine("hyper volume: {0}", optimizationResult.Front.HyperVolume());
-            Console.WriteLine("IGD: {0}", optimizationResult.Front.InversedGenerationalDistance());
-            Console.WriteLine("\tlast update (time): {0}s", optimizationResult.LastUpdateTime);
-            Console.WriteLine("\tlast update (iteration): {0}", optimizationResult.LastUpdateIteration);
-            Console.WriteLine("\tlast update (FFE): {0}", optimizationResult.LastUpdateFFE);
+            string strFilePath = @"..\..\Results\" + $"zad_{zadId}_optims.csv";
+            string strSeperator = ";";
+            StringBuilder sbOutput = new StringBuilder();
+
+            sbOutput.Append(genes);
+            sbOutput.Append(strSeperator + problemName);
+            sbOutput.Append(strSeperator + evaluation.tMaxValue);
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "genes;problemName;maxVal";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
         }
 
-        private static void Lab9NSGA2(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed)
-        {
-            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5);
-
-            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
-
-            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
-            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
-            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
-            SampleBiObjectiveSelection selection = new SampleBiObjectiveSelection(dominationComparer, seed);
-
-            BiObjective.NSGA2.NSGA2<bool> nsga2 = new BiObjective.NSGA2.NSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, 
-                                                                                    crossover, mutation, 100, seed);
-
-            nsga2.Run();
-
-            ReportBiObjectiveOptimizationResult(nsga2.Result);
-        }
-
-        private static void Lab9ZeroMaxOneMax(int? seed)
-        {
-            Lab9NSGA2(new CBinaryZeroMaxOneMaxEvaluation(10), seed);
-        }
-
-        private static void Lab9Trap5InvTrap5(int? seed)
-        {
-            Lab9NSGA2(new CBinaryTrapInvTrapEvaluation(5, 10), seed);
-        }
-
-        private static void Lab9LOTZ(int? seed)
-        {
-            Lab9NSGA2(new CBinaryLOTZEvaluation(10), seed);
-        }
-
-        private static void Lab9MOMaxCut(int? seed)
-        {
-            Lab9NSGA2(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed);
-        }
-
-        private static void Lab9MOKnapsack(int? seed)
-        {
-            Lab9NSGA2(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed);
-        }
-
-        private static void Lab8BiObjectiveBinaryGA(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed)
-        {
-            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5);
-
-            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
-
-            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
-            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
-            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
-            SampleBiObjectiveSelection selection = new SampleBiObjectiveSelection(dominationComparer, seed);
-
-            BiObjective.GeneticAlgorithm<bool> ga = new BiObjective.GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
-
-            ga.Run();
-
-            ReportBiObjectiveOptimizationResult(ga.Result);
-        }
-
-        private static void Lab8ZeroMaxOneMax(int? seed)
-        {
-            Lab8BiObjectiveBinaryGA(new CBinaryZeroMaxOneMaxEvaluation(10), seed);
-        }
-
-        private static void Lab8Trap5InvTrap5(int? seed)
-        {
-            Lab8BiObjectiveBinaryGA(new CBinaryTrapInvTrapEvaluation(5, 10), seed);
-        }
-
-        private static void Lab8LOTZ(int? seed)
-        {
-            Lab8BiObjectiveBinaryGA(new CBinaryLOTZEvaluation(10), seed);
-        }
-
-        private static void Lab8MOMaxCut(int? seed)
-        {
-            Lab8BiObjectiveBinaryGA(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed);
-        }
-
-        private static void Lab8MOKnapsack(int? seed)
-        {
-            Lab8BiObjectiveBinaryGA(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed);
-        }
 
         private static void Lab5(int? seed)
         {
@@ -179,191 +107,260 @@ namespace MetaheuristicsCS
                          seed);
         }
 
-        private static void Lab3CMAES(IEvaluation<double, double> evaluation, int? seed)
+
+
+        private static void RunBinaryProblems(int? seed, string method)
         {
-            IterationsStopCondition stopCondition = new IterationsStopCondition(1000);
 
-            CMAES cmaes = new CMAES(evaluation, stopCondition, 1, seed);
-
-            cmaes.Run();
-
-            ReportOptimizationResult(cmaes.Result);
+            //Lab5(seed);
+            Lab4Max3SAT(seed);
+            Lab4TrapTournamentSelectionOnePointCrossover(seed);
+            Lab4TrapRouletteWheelSelectionUniformCrossover(seed);
         }
 
-        private static void Lab3SphereCMAES(int? seed)
+        static void Raport2Zad1(int? seed, int n_samples)
         {
-            Lab3CMAES(new CRealSphereEvaluation(10), seed);
+            string[] config = { "default", "default2", "default3" };
+
+            for (int i = 0; i < n_samples; i++)
+            {
+                foreach (string conf in config)
+                {
+                    RunBinaryProblems(seed, conf);
+                }
+            }
         }
 
-        private static void Lab3Sphere10CMAES(int? seed)
+
+
+
+        /* Raport 3 code */
+        /* Raport 3 code */
+
+        private static void SaveOptimizationResult<Element>(BiObjective.OptimizationResult<Element> optimizationResult, int zadId, string problemName, int genes, string method)
         {
-            Lab3CMAES(new CRealSphere10Evaluation(10), seed);
+            string strFilePath = @"..\..\Results\" + $"zad_{zadId}_{problemName}.csv";
+            string strSeperator = ";";
+            StringBuilder sbOutput = new StringBuilder();
+
+            sbOutput.Append(genes);
+            sbOutput.Append(strSeperator + method);
+
+            sbOutput.Append(strSeperator + optimizationResult.Front.HyperVolume());
+            sbOutput.Append(strSeperator + optimizationResult.Front.InversedGenerationalDistance());
+            sbOutput.Append(strSeperator + optimizationResult.LastUpdateTime);
+            sbOutput.Append(strSeperator + optimizationResult.LastUpdateIteration);
+            sbOutput.Append(strSeperator + optimizationResult.LastUpdateFFE);
+
+            // Create and write the csv file
+            //File.WriteAllText(strFilePath, sbOutput.ToString());
+
+            // To append more lines to the csv file
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "genes;method;hyperVolume;IGD;lastUpdateTime;lastUpdateIteration;LastUpdateFFE";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
         }
 
-        private static void Lab3EllipsoidCMAES(int? seed)
+
+        private static void ReportBiObjectiveOptimizationResult<Element>(BiObjective.OptimizationResult<Element> optimizationResult)
         {
-            Lab3CMAES(new CRealEllipsoidEvaluation(10), seed);
+            Console.WriteLine("hyper volume: {0}", optimizationResult.Front.HyperVolume());
+            Console.WriteLine("IGD: {0}", optimizationResult.Front.InversedGenerationalDistance());
+            Console.WriteLine("\tlast update (time): {0}s", optimizationResult.LastUpdateTime);
+            Console.WriteLine("\tlast update (iteration): {0}", optimizationResult.LastUpdateIteration);
+            Console.WriteLine("\tlast update (FFE): {0}", optimizationResult.LastUpdateFFE);
         }
 
-        private static void Lab3Step2SphereCMAES(int? seed)
+        private static void Lab9NSGA2(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed, string method, string problemName)
         {
-            Lab3CMAES(new CRealStep2SphereEvaluation(10), seed);
+            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5); // TODO: "wiarygodne kryterium zatrzymania"
+
+            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
+
+            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
+            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
+            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
+            SampleBiObjectiveSelection selection = new SampleBiObjectiveSelection(dominationComparer, seed);
+
+            BiObjective.NSGA2.NSGA2<bool> nsga2 = new BiObjective.NSGA2.NSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, 
+                                                                                    crossover, mutation, 100, seed);
+
+            nsga2.Run();
+
+            ReportBiObjectiveOptimizationResult(nsga2.Result);
+            SaveOptimizationResult(nsga2.Result, 1, problemName, 123, method);
+            SaveProblemParams<double>(1, problemName, 123, evaluation);
         }
 
-        private static void Lab3RastriginCMAES(int? seed)
+        private static void Lab9ZeroMaxOneMax(int? seed)
         {
-            Lab3CMAES(new CRealRastriginEvaluation(10), seed);
+            Lab9NSGA2(new CBinaryZeroMaxOneMaxEvaluation(10), seed, "default", "ZeroMaxOneMax");
         }
 
-        private static void Lab3AckleyCMAES(int? seed)
+        private static void Lab9Trap5InvTrap5(int? seed)
         {
-            Lab3CMAES(new CRealAckleyEvaluation(10), seed);
+            Lab9NSGA2(new CBinaryTrapInvTrapEvaluation(5, 10), seed, "default", "Trap5InvTrap5");
         }
 
-        private static void Lab2Sphere(int? seed)
+        private static void Lab9LOTZ(int? seed)
         {
-            CRealSphereEvaluation sphereEvaluation = new CRealSphereEvaluation(2);
-
-            List<double> sigmas = Enumerable.Repeat(0.1, sphereEvaluation.iSize).ToList();
-
-            IterationsStopCondition stopCondition = new IterationsStopCondition(1000);
-            RealGaussianMutation mutation = new RealGaussianMutation(sigmas, sphereEvaluation, seed);
-            RealNullRealMutationES11Adaptation mutationAdaptation = new RealNullRealMutationES11Adaptation(mutation);
-
-            RealEvolutionStrategy11 es11 = new RealEvolutionStrategy11(sphereEvaluation, stopCondition, mutationAdaptation, seed);
-
-            es11.Run();
-
-            ReportOptimizationResult(es11.Result);
+            Lab9NSGA2(new CBinaryLOTZEvaluation(10), seed, "default", "LOTZ");
         }
 
-        private static void Lab2Sphere10(int? seed)
+        private static void Lab9MOMaxCut(int? seed)
         {
-            CRealSphere10Evaluation sphere10Evaluation = new CRealSphere10Evaluation(2);
-
-            List<double> sigmas = Enumerable.Repeat(0.1, sphere10Evaluation.iSize).ToList();
-
-            IterationsStopCondition stopCondition = new IterationsStopCondition(1000);
-            RealGaussianMutation mutation = new RealGaussianMutation(sigmas, sphere10Evaluation, seed);
-            RealNullRealMutationES11Adaptation mutationAdaptation = new RealNullRealMutationES11Adaptation(mutation);
-
-            RealEvolutionStrategy11 es11 = new RealEvolutionStrategy11(sphere10Evaluation, stopCondition, mutationAdaptation, seed);
-
-            es11.Run();
-
-            ReportOptimizationResult(es11.Result);
+            Lab9NSGA2(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed, "default", "MOMaxCut");
         }
 
-        private static void Lab2Ellipsoid(int? seed)
+        private static void Lab9MOKnapsack(int? seed)
         {
-            CRealEllipsoidEvaluation ellipsoidEvaluation = new CRealEllipsoidEvaluation(2);
-
-            List<double> sigmas = Enumerable.Repeat(0.1, ellipsoidEvaluation.iSize).ToList();
-
-            IterationsStopCondition stopCondition = new IterationsStopCondition(1000);
-            RealGaussianMutation mutation = new RealGaussianMutation(sigmas, ellipsoidEvaluation, seed);
-            RealNullRealMutationES11Adaptation mutationAdaptation = new RealNullRealMutationES11Adaptation(mutation);
-
-            RealEvolutionStrategy11 es11 = new RealEvolutionStrategy11(ellipsoidEvaluation, stopCondition, mutationAdaptation, seed);
-
-            es11.Run();
-
-            ReportOptimizationResult(es11.Result);
+            Lab9NSGA2(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed, "default", "MOKnapSack");
         }
 
-        private static void Lab2Step2Sphere(int? seed)
+        private static void Lab8BiObjectiveBinaryGA(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed, string method, string problemName)
         {
-            CRealStep2SphereEvaluation step2SphereEvaluation = new CRealStep2SphereEvaluation(2);
+            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5);
+            //RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(1);
+            //IterationsStopCondition stopCondition = new IterationsStopCondition(200);
 
-            List<double> sigmas = Enumerable.Repeat(0.1, step2SphereEvaluation.iSize).ToList();
+            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
 
-            IterationsStopCondition stopCondition = new IterationsStopCondition(1000);
-            RealGaussianMutation mutation = new RealGaussianMutation(sigmas, step2SphereEvaluation, seed);
-            RealNullRealMutationES11Adaptation mutationAdaptation = new RealNullRealMutationES11Adaptation(mutation);
+            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
+            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
+            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
 
-            RealEvolutionStrategy11 es11 = new RealEvolutionStrategy11(step2SphereEvaluation, stopCondition, mutationAdaptation, seed);
+            ASelection<Tuple<double, double>> selection = null;
 
-            es11.Run();
+            switch (method)
+            {
+                case "default":
+                    selection = new SampleBiObjectiveSelection(dominationComparer, seed);
+                    var ga = new BiObjective.GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    ga.Run();
+                    ReportBiObjectiveOptimizationResult(ga.Result);
+                    SaveOptimizationResult(ga.Result, 1, problemName, 123, method);
+                    SaveProblemParams<double>(1, problemName, 123, evaluation);
+                    break;
+                case "skrajni1":
+                    selection = new SkrajniSelection(dominationComparer, seed);
+                    var gaa = new BiObjective.GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    gaa.Run();
+                    ReportBiObjectiveOptimizationResult(gaa.Result);
+                    SaveOptimizationResult(gaa.Result, 1, problemName, 123, method);
+                    SaveProblemParams<double>(1, problemName, 123, evaluation);
+                    break;
+                case "skrajni2":
+                    selection = new SkrajniSelectionDwa(dominationComparer, seed);
+                    var gaaa = new BiObjective.GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    gaaa.Run();
+                   
+                    ReportBiObjectiveOptimizationResult(gaaa.Result);
+                    SaveOptimizationResult(gaaa.Result, 1, problemName, 123, method);
+                    SaveProblemParams<double>(1, problemName, 123, evaluation);
+                    break;
 
-            ReportOptimizationResult(es11.Result);
+                case "skrajni1_turniej":
+                    selection = new SkrajniSelection(dominationComparer, seed);
+                    var gaaaa = new BiObjective.GeneticAlgorithmPierwszy<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    gaaaa.Run();
+                    ReportBiObjectiveOptimizationResult(gaaaa.Result);
+                    SaveOptimizationResult(gaaaa.Result, 1, problemName, 123, method);
+                    SaveProblemParams<double>(1, problemName, 123, evaluation);
+                    break;
+                case "skrajni2_turniej":
+                    selection = new SkrajniSelectionDwa(dominationComparer, seed);
+                    var gaaaaaa = new BiObjective.GeneticAlgorithmPierwszy<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    gaaaaaa.Run();
+
+                    ReportBiObjectiveOptimizationResult(gaaaaaa.Result);
+                    SaveOptimizationResult(gaaaaaa.Result, 1, problemName, 123, method);
+                    SaveProblemParams<double>(1, problemName, 123, evaluation);
+                    break;
+                default:
+                    Console.WriteLine("USING DEFAULT METHOD!!!!!!!!!!!!!!!!!");
+                    //ga = new BiObjective.GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 100, seed);
+                    break;
+            };
+
+
+
         }
 
-        private static void Lab1BinaryRandomSearch(IEvaluation<bool, double> evaluation, int? seed, int maxIterationNumber)
+        private static void Lab8ZeroMaxOneMax(int? seed, string method)
         {
-            IterationsStopCondition stopCondition = new IterationsStopCondition(maxIterationNumber);
-            BinaryRandomSearch randomSearch = new BinaryRandomSearch(evaluation, stopCondition, seed);
-
-            randomSearch.Run();
-
-            ReportOptimizationResult(randomSearch.Result);
+            Lab8BiObjectiveBinaryGA(new CBinaryZeroMaxOneMaxEvaluation(10), seed, method, "ZeroMaxOneMax");
         }
 
-        private static void Lab1OneMax(int? seed)
+        private static void Lab8Trap5InvTrap5(int? seed, string method)
         {
-            Lab1BinaryRandomSearch(new CBinaryOneMaxEvaluation(5), seed, 500);
+            Lab8BiObjectiveBinaryGA(new CBinaryTrapInvTrapEvaluation(5, 10), seed, method, "Trap5InvTrap5");
         }
 
-        private static void Lab1StandardDeceptiveConcatenation(int? seed)
+        private static void Lab8LOTZ(int? seed, string method)
         {
-            Lab1BinaryRandomSearch(new CBinaryStandardDeceptiveConcatenationEvaluation(5, 1), seed, 500);
+            Lab8BiObjectiveBinaryGA(new CBinaryLOTZEvaluation(10), seed, method, "LOTZ");
         }
 
-        private static void Lab1BimodalDeceptiveConcatenation(int? seed)
+        private static void Lab8MOMaxCut(int? seed, string method)
         {
-            Lab1BinaryRandomSearch(new CBinaryBimodalDeceptiveConcatenationEvaluation(10, 1), seed, 500);
+            Lab8BiObjectiveBinaryGA(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed, method, "MOMaxCut");
         }
 
-        private static void Lab1IsingSpinGlass(int? seed)
+        private static void Lab8MOKnapsack(int? seed, string method)
         {
-            Lab1BinaryRandomSearch(new CBinaryIsingSpinGlassEvaluation(25), seed, 500);
+            Lab8BiObjectiveBinaryGA(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed, method, "MOKnapsack");
         }
 
-        private static void Lab1NkLandscapes(int? seed)
+        private static void RunObjectiveProblems(int? seed, string method)
         {
-            Lab1BinaryRandomSearch(new CBinaryNKLandscapesEvaluation(10), seed, 500);
+
+            Lab8ZeroMaxOneMax(seed, method);
+            Lab8Trap5InvTrap5(seed, method);
+            Lab8LOTZ(seed, method);
+            Lab8MOMaxCut(seed, method);
+            Lab8MOKnapsack(seed, method);
         }
+
+        static void Raport3Zad1(int? seed, int n_samples)
+        {
+            //(string, int)[] config = new[] { ("default", 0), ("1_5_success", 5), ("1_5_success", 25), ("1_5_success", 50), ("dziedzina_adaptation", 10) };
+
+            /*
+            for (int i = 0; i < n_samples; i++)
+            {
+                foreach ((string, int) conf in config)
+                {
+                    RunProblems(seed, conf.Item1, conf.Item2);
+                }
+            }
+            */
+            string[] config = { "skrajni2", "skrajni1", "default"}; //, ;//, "default3" }; // "skrajni2_turniej", "skrajni1_turniej", 
+
+            for (int i = 0; i < n_samples; i++)
+            {
+                foreach (string conf in config)
+                {
+                    RunObjectiveProblems(seed, conf);
+                }
+            }
+        }
+
+
+
+        /* End of raport 3 code */
 
         static void Main(string[] args)
         {
             int? seed = null;
+            int n_samples = 5;
 
-            Lab9ZeroMaxOneMax(seed);
-            Lab9Trap5InvTrap5(seed);
-            Lab9LOTZ(seed);
-            Lab9MOMaxCut(seed);
-            Lab9MOKnapsack(seed);
-            
-            Lab8ZeroMaxOneMax(seed);
-            Lab8Trap5InvTrap5(seed);
-            Lab8LOTZ(seed);
-            Lab8MOMaxCut(seed);
-            Lab8MOKnapsack(seed);
-
-            /*
-            Lab5(seed);
-
-            Lab4Max3SAT(seed);
-            Lab4TrapTournamentSelectionOnePointCrossover(seed);
-            Lab4TrapRouletteWheelSelectionUniformCrossover(seed);
-
-            Lab3SphereCMAES(seed);
-            Lab3Sphere10CMAES(seed);
-            Lab3EllipsoidCMAES(seed);
-            Lab3Step2SphereCMAES(seed);
-            Lab3RastriginCMAES(seed);
-            Lab3AckleyCMAES(seed);
-            
-            Lab2Sphere(seed);
-            Lab2Sphere10(seed);
-            Lab2Ellipsoid(seed);
-            Lab2Step2Sphere(seed);
-
-            Lab1OneMax(seed);
-            Lab1StandardDeceptiveConcatenation(seed);
-            Lab1BimodalDeceptiveConcatenation(seed);
-            Lab1IsingSpinGlass(seed);
-            Lab1NkLandscapes(seed);
-            */
+            //Raport2Zad1(seed, n_samples);
+            Raport3Zad1(seed, n_samples);
 
             Console.ReadKey();
         }
