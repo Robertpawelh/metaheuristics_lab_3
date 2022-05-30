@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Optimizers.Framework.PopulationOptimizers;
+using Optimizers.Lab5;
 
 namespace Selections
 {

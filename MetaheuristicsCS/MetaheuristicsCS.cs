@@ -9,6 +9,7 @@ using EvaluationsCLI;
 using Generators;
 using MetaheuristicsCS.Optimizers.BiObjective.Lista8;
 using Mutations;
+using Optimizers.Lab5;
 using Optimizers.SingleObjective;
 using Selections;
 using Selections.BiObjective;
@@ -32,7 +33,35 @@ namespace MetaheuristicsCS
             Console.WriteLine("\twhen (FFE): {0}", optimizationResult.BestFFE);
         }
 
-        private static void SaveProblemParams<Element>(int zadId, string problemName, int genes, IEvaluation<bool, Tuple<double, double>> evaluation)
+        private static void SaveOptimizationResult<Element>(OptimizationResult<Element> optimizationResult, int zadId, string problemName, double? param1, double? param2, string method)
+        {
+            string strFilePath = @"..\..\Results\" + $"zad_{zadId}_{problemName}.csv";
+            string strSeperator = ";";
+            StringBuilder sbOutput = new StringBuilder();
+
+            sbOutput.Append(param1);
+            sbOutput.Append(strSeperator + param2);
+            sbOutput.Append(strSeperator + method);
+            sbOutput.Append(strSeperator + optimizationResult.BestValue);
+            sbOutput.Append(strSeperator + optimizationResult.BestTime);
+            sbOutput.Append(strSeperator + optimizationResult.BestIteration);
+            sbOutput.Append(strSeperator + optimizationResult.BestFFE);
+
+            // Create and write the csv file
+            //File.WriteAllText(strFilePath, sbOutput.ToString());
+
+            // To append more lines to the csv file
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "param1;param2;method;bestValue;bestTime;bestIteration;bestFFE";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
+        }
+
+        private static void SaveProblemParams<Element>(int zadId, string problemName, int genes, IEvaluation<bool, double> evaluation)
         {
             string strFilePath = @"..\..\Results\" + $"zad_{zadId}_optims.csv";
             string strSeperator = ";";
@@ -51,55 +80,73 @@ namespace MetaheuristicsCS
             File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
         }
 
+     
 
-        private static void Lab5(int? seed)
+        private static void Lab4BinaryGA(IEvaluation<bool, double> evaluation,
+                                            IStopCondition stopCondition,
+                                            int populationSize,
+                                            ASelection<double> selection, 
+                                            ACrossover crossover, 
+                                            int? seed, 
+                                            string method, 
+                                            double? param1, 
+                                            double? param2,
+                                            string problemName)
         {
-            CBinaryKnapsackEvaluation evaluation = new CBinaryKnapsackEvaluation(EBinaryKnapsackInstance.knapPI_1_100_1000_1);
-            IterationsStopCondition stopCondition = new IterationsStopCondition(100);
-
-            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
-            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
-            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
-            TournamentSelection selection = new TournamentSelection(2, seed);
-
-            GeneticAlgorithm<bool> ga = new GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 50, seed);
-
-            ga.Run();
-
-            ReportOptimizationResult<bool>(ga.Result);
-        }
-
-        private static void Lab4BinaryGA(IEvaluation<bool, double> evaluation, ASelection<double> selection, ACrossover crossover, int? seed)
-        {
-            IterationsStopCondition stopCondition = new IterationsStopCondition(100);
-
+            //IterationsStopCondition stopCondition = new IterationsStopCondition(100);
+            //RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5); // FFE?
             BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
             BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
 
-            GeneticAlgorithm<bool> ga = new GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, 50, seed);
+            if (method == "lab4zad2")
+            {
+                mutation = new BinaryBitFlipMutation((double) param2, evaluation, seed);
+            }
+
+
+            GeneticAlgorithm<bool> ga = new GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed);
 
             ga.Run();
 
             ReportOptimizationResult(ga.Result);
+            SaveOptimizationResult(ga.Result, 1, problemName, param1, param2, method);
+            SaveProblemParams<double>(1, problemName, 123, evaluation);
         }
 
-        private static void Lab4Max3SAT(int? seed)
+        private static void Lab4Max3SAT(int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
         {
-            Lab4BinaryGA(new CBinaryMax3SatEvaluation(100),
-                         new TournamentSelection(2, seed),
-                         new OnePointCrossover(0.5, seed),
-                         seed);
+            Lab4BinaryGA(new CBinaryMax3SatEvaluation(100), stopCondition, populationSize, selection, crossover, seed, method, param1, param2, "Max3SAT");
         }
 
-        private static void Lab4TrapTournamentSelectionOnePointCrossover(int? seed)
+        private static void Lab4IsingSpinGlass(int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
+        {
+            Lab4BinaryGA(new CBinaryIsingSpinGlassEvaluation(100), stopCondition, populationSize, selection, crossover, seed, method, param1, param2, "ISG");
+        }
+
+        private static void Lab4NKLandscapes(int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
+        {
+            Lab4BinaryGA(new CBinaryNKLandscapesEvaluation(100), stopCondition, populationSize, selection, crossover, seed, method, param1, param2, "NKLandscapes");
+        }
+
+        private static void Lab4StandardDeceptiveConcatenation(int n_functions, int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
+        {
+            //Lab1BinaryRandomSearch(new CBinaryStandardDeceptiveConcatenationEvaluation(genes, genes/5), "std_deceptive", genes, seed, 500);
+            Lab4BinaryGA(new CBinaryStandardDeceptiveConcatenationEvaluation(3, n_functions), stopCondition, populationSize, selection, crossover, seed, method, param1, param2, "Concatenation_" + n_functions);
+            //new RouletteWheelSelection(seed),
+            //            new UniformCrossover(0.5, seed),
+            //             seed);
+        }
+
+        /*
+        private static void Lab4TrapTournamentSelectionOnePointCrossover(int? seed, string method)
         {
             Lab4BinaryGA(new CBinaryStandardDeceptiveConcatenationEvaluation(3, 50),
                          new TournamentSelection(2, seed),
                          new OnePointCrossover(0.5, seed),
-                         seed);
+                         seed, method, "TrapTournamentSelectionOnePointCrossover");
         }
 
-        private static void Lab4TrapRouletteWheelSelectionUniformCrossover(int? seed)
+        private static void Lab4TrapRouletteWheelSelectionUniformCrossover(int? seed, string method)
         {
             Lab4BinaryGA(new CBinaryStandardDeceptiveConcatenationEvaluation(3, 50),
                          new RouletteWheelSelection(seed),
@@ -107,30 +154,150 @@ namespace MetaheuristicsCS
                          seed);
         }
 
+        */
 
-
-        private static void RunBinaryProblems(int? seed, string method)
+        private static void RunLab4Problems(int? seed, string method, double? param1, double? param2)
         {
+            // TODO CHANGE STOP CONDITIONS, PROBS AND POPULATION SIZE BEFORE DOING EXPERIMENTS
+            var selection = new TournamentSelection(2, seed);
+            var crossover = new OnePointCrossover(0.5, seed);
+            var populationSize = 500;
+            IStopCondition stopCondition = new RunningTimeStopCondition(5); // FFE?
+
+            if (method == "lab4zad1")
+            {
+                Console.WriteLine($"Setting population size to: {param1}");
+                populationSize = (int) param1;
+                stopCondition = new IterationsStopCondition(100);
+                method = $"{param1}";
+            }
+
+
+            if (method == "lab4zad2")
+            {
+                Console.WriteLine($"Setting crossover and mutation to: P(C) = {param1}, P(M) = {param2}");
+                populationSize = 500;
+                stopCondition = new IterationsStopCondition(100); 
+                crossover = new OnePointCrossover((double)param1, seed);
+                method = $"C{param1}_M{param2}";
+            }
+
+
+            //new RouletteWheelSelection(seed),
+            //new UniformCrossover(0.5, seed),
+
 
             //Lab5(seed);
-            Lab4Max3SAT(seed);
-            Lab4TrapTournamentSelectionOnePointCrossover(seed);
-            Lab4TrapRouletteWheelSelectionUniformCrossover(seed);
+            Lab4Max3SAT(seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab4IsingSpinGlass(seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab4NKLandscapes(seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab4StandardDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab4StandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab4StandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
         }
 
-        static void Raport2Zad1(int? seed, int n_samples)
+        /*
+        private static void Lab5KnapsackUposledzony(IStopCondition stopCondition,
+                                    int populationSize,
+                                    ASelection<double> selection,
+                                    ACrossover crossover,
+                                    int? seed,
+                                    string method,
+                                    double? param1,
+                                    double? param2,
+                                    string problemName)
         {
-            string[] config = { "default", "default2", "default3" };
+            CBinaryKnapsackEvaluation evaluation = new CBinaryKnapsackEvaluation(EBinaryKnapsackInstance.knapPI_1_100_1000_1);
 
-            for (int i = 0; i < n_samples; i++)
+            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
+            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
+
+            GeneticAlgorithm<bool> ga = new GeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed);
+
+            ga.Run();
+
+            ReportOptimizationResult<bool>(ga.Result);
+            SaveOptimizationResult(ga.Result, 1, problemName, param1, param2, method);
+            SaveProblemParams<double>(1, problemName, 123, evaluation);
+        }
+        */
+
+
+
+        private static void Lab5Knapsack(IStopCondition stopCondition,
+                                            int populationSize,
+                                            KnapsackASelection selection,
+                                            ACrossover crossover,
+                                            int? seed,
+                                            string method,
+                                            double? param1,
+                                            double? param2,
+                                            string problemName)
+        {
+            CBinaryKnapsackEvaluation evaluation = new CBinaryKnapsackEvaluation(EBinaryKnapsackInstance.knapPI_1_100_1000_1);
+
+            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
+            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
+
+            KnapsackGeneticAlgorithm ga = new KnapsackGeneticAlgorithm (evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed, evaluationMethod: method);
+
+            ga.Run();
+
+            ReportOptimizationResult<bool>(ga.Result);
+            SaveOptimizationResult(ga.Result, 1, problemName, param1, param2, method);
+            SaveProblemParams<double>(1, problemName, 123, evaluation);
+        }
+
+
+        private static void RunLab5Knapsack(int? seed, string method, double? param1, double? param2)
+        {
+            // TODO CHANGE STOP CONDITIONS, PROBS AND POPULATION SIZE BEFORE DOING EXPERIMENTS
+            var selection = new KnapsackTournamentSelection(2, seed);
+            var crossover = new OnePointCrossover(0.5, seed);
+            var populationSize = 500;
+            IStopCondition stopCondition = new RunningTimeStopCondition(5); // FFE?
+
+            Lab5Knapsack(stopCondition, populationSize, selection, crossover, seed, method, param1, param2, "Knapsacks");
+        }
+
+        static void Raport2Lab4_Zad1(int? seed, int n_samples)
+        {
+            int[] populationSizes = { 10, 50, 100, 200, 500, 1000 };
+            foreach(int populationSize in populationSizes)
             {
-                foreach (string conf in config)
+                for (int i = 0; i < n_samples; i++)
                 {
-                    RunBinaryProblems(seed, conf);
+                    RunLab4Problems(seed, "lab4zad1", populationSize, null);
                 }
             }
         }
 
+        static void Raport2Lab4_Zad2(int? seed, int n_samples)
+        {
+            double[] probabilities = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+            foreach (double crossoverProbability in probabilities)
+            {
+                foreach (double mutationProbability in probabilities)
+                {
+                    for (int i = 0; i < n_samples; i++)
+                    {
+                        RunLab4Problems(seed, "lab4zad2", crossoverProbability, mutationProbability);
+                    }
+                }
+            }
+        }
+
+        static void Raport2Lab5(int? seed, int n_samples)
+        {
+            string[] methods= { "penalty", "lamarck", "baldwin" };
+            foreach (string method in methods)
+            {
+                for (int i = 0; i < n_samples; i++)
+                {
+                    RunLab5Knapsack(seed, method, null, null);
+                }
+            }
+        }
 
 
 
@@ -160,6 +327,25 @@ namespace MetaheuristicsCS
             if (!File.Exists(strFilePath))
             {
                 string header = "genes;method;hyperVolume;IGD;lastUpdateTime;lastUpdateIteration;LastUpdateFFE";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
+        }
+
+        private static void SaveProblemParams<Element>(int zadId, string problemName, int genes, IEvaluation<bool, Tuple<double, double>> evaluation)
+        {
+            string strFilePath = @"..\..\Results\" + $"zad_{zadId}_optims.csv";
+            string strSeperator = ";";
+            StringBuilder sbOutput = new StringBuilder();
+
+            sbOutput.Append(genes);
+            sbOutput.Append(strSeperator + problemName);
+            sbOutput.Append(strSeperator + evaluation.tMaxValue);
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "genes;problemName;maxVal";
                 File.WriteAllText(strFilePath, header + Environment.NewLine);
             };
 
@@ -357,10 +543,15 @@ namespace MetaheuristicsCS
         static void Main(string[] args)
         {
             int? seed = null;
-            int n_samples = 5;
+            int n_samples = 2;
 
+            //Raport2Lab4_Zad1(seed, n_samples);
+            //Raport2Lab4_Zad2(seed, n_samples);
+            Raport2Lab5(seed, n_samples);
             //Raport2Zad1(seed, n_samples);
-            Raport3Zad1(seed, n_samples);
+            //Raport3Zad1(seed, n_samples);
+
+            //Lab5(seed);
 
             Console.ReadKey();
         }

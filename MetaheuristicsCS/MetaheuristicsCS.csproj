@@ -102,6 +102,12 @@
     <Compile Include="Optimizers\Framework\PopulationOptimizers\APopulationOptimizer.cs" />
     <Compile Include="Optimizers\Framework\PopulationOptimizers\GeneticAlgorithm.cs" />
     <Compile Include="Optimizers\Framework\PopulationOptimizers\Individual.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackASelection.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackGeneticAlgorithm.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackIndividual.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackOptimizer.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackRouletteWheelSelection.cs" />
+    <Compile Include="Optimizers\Lab5\KnapsackTournamentSelection.cs" />
     <Compile Include="Optimizers\SingleObjective\GeneticAlgorithm.cs" />
     <Compile Include="Optimizers\SingleObjective\OptimizationState.cs" />
     <Compile Include="Optimizers\SingleObjective\RandomSearch\BinaryRandomSearch.cs" />
