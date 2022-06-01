@@ -12,10 +12,10 @@ namespace Optimizers.Framework
         protected IEvaluation<Element, EvaluationResult> evaluation;
         protected IStopCondition stopCondition;
 
-        private long iterationNumber;
-        private DateTime startTime;
+        protected long iterationNumber;
+        protected DateTime startTime;
 
-        private readonly AOptimizationState<Element, EvaluationResult, OptimizationResult> state;
+        protected readonly AOptimizationState<Element, EvaluationResult, OptimizationResult> state;
 
         public AOptimizer(IEvaluation<Element, EvaluationResult> evaluation, IStopCondition stopCondition, 
                           AOptimizationState<Element, EvaluationResult, OptimizationResult> state)

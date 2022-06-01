@@ -61,6 +61,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crossovers\ACrossover.cs" />
+    <Compile Include="Crossovers\DSMCrossover.cs" />
     <Compile Include="Crossovers\OnePointCrossover.cs" />
     <Compile Include="Crossovers\UniformCrossover.cs" />
     <Compile Include="DominationComparers\BiObjective\DefaultDominationComparer.cs" />
@@ -77,6 +81,9 @@
     <Compile Include="Generators\AGenerator.cs" />
     <Compile Include="Generators\BinaryRandomGenerator.cs" />
     <Compile Include="Generators\RealRandomGenerator.cs" />
+    <Compile Include="Lab7\DSMGeneticAlgorithm.cs" />
+    <Compile Include="Lab7\RandomBinaryBimodalDeceptiveConcatenationEvaluation.cs" />
+    <Compile Include="Lab7\RandomBinaryStandardDeceptiveConcatenationEvaluation.cs" />
     <Compile Include="MetaheuristicsCS.cs" />
     <Compile Include="Mutations\ARandomMutation.cs" />
     <Compile Include="Mutations\EvolutionaryStrategy11\ARealMutationES11Adaptation.cs" />
@@ -108,6 +115,8 @@
     <Compile Include="Optimizers\Lab5\KnapsackOptimizer.cs" />
     <Compile Include="Optimizers\Lab5\KnapsackRouletteWheelSelection.cs" />
     <Compile Include="Optimizers\Lab5\KnapsackTournamentSelection.cs" />
+    <Compile Include="Optimizers\Lab6\IslandGeneticAlgorithm.cs" />
+    <Compile Include="Optimizers\Lab6\UtykanieGeneticAlgorithm.cs" />
     <Compile Include="Optimizers\SingleObjective\GeneticAlgorithm.cs" />
     <Compile Include="Optimizers\SingleObjective\OptimizationState.cs" />
     <Compile Include="Optimizers\SingleObjective\RandomSearch\BinaryRandomSearch.cs" />
