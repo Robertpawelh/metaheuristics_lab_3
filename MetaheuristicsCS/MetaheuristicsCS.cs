@@ -848,9 +848,9 @@ namespace MetaheuristicsCS
 
 
 
-            Raport2Lab6(seed, n_samples);
-            Raport2Lab7_Zad1(seed, n_samples);
-            Raport2Lab7_Zad2(seed, n_samples);
+            //Raport2Lab6(seed, n_samples);
+            //Raport2Lab7_Zad1(seed, n_samples);
+            //Raport2Lab7_Zad2(seed, n_samples);
             Raport2Lab7_Zad3(seed, n_samples);
             //Raport2Zad1(seed, n_samples);
             //Raport3Zad1(seed, n_samples);

@@ -6,7 +6,7 @@ namespace Crossovers
 {
     abstract class ACrossover
     {
-        private readonly BoolRandom crossoverRNG;
+        public readonly BoolRandom crossoverRNG;
 
         public double Probability { get; set; }
 
