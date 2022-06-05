@@ -106,7 +106,7 @@ namespace MetaheuristicsCS
             if (method == "lab4zad2")
             {
                 zadId = 42;
-                mutation = new BinaryBitFlipMutation((double) param2, evaluation, seed);
+                mutation = new BinaryBitFlipMutation((double) param2 / evaluation.iSize, evaluation, seed);
                 method = $"C{param1}_M{param2}";
             }
             else if (method == "lab4zad1")
@@ -114,10 +114,77 @@ namespace MetaheuristicsCS
                 zadId = 41;
                 method = $"{param1}";
             }
-            else if (method == "lab6zad3")
+            else if (method == "lab6zad3_default")
             {
                 zadId = 63;
-                mutation = new BinaryBitFlipMutation((double) param1, evaluation, seed);
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_no_mutation")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_no_crossover")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_20pop")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 20;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_10pop")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 10;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_moreepictournament")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(150, seed);
+            }
+            else if (method == "lab6zad3_epictournament")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(100, seed);
+            }
+            else if (method == "lab6zad3_no_mutation_low_population")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0 / evaluation.iSize, evaluation, seed);
+                populationSize = 10;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
+            }
+            else if (method == "lab6zad3_island")
+            {
+                zadId = 63;
+                mutation = new BinaryBitFlipMutation(0.4 / evaluation.iSize, evaluation, seed);
+                populationSize = 200;
+                crossover = new OnePointCrossover(0.7, seed);
+                selection = new TournamentSelection(2, seed);
             }
             else if (method.StartsWith("lab7zad1"))
             {
@@ -134,8 +201,6 @@ namespace MetaheuristicsCS
 
             if (method == "lab6zad3_island")
             {
-                mutation = new BinaryBitFlipMutation(0, evaluation, seed);
-                zadId = 63;
                 method = $"island_N{param1}_M{param2}";
                 int n_populations = (int)param1;
                 int migrations_frequence = (int)param2;
@@ -147,9 +212,9 @@ namespace MetaheuristicsCS
                 SaveOptimizationResult(ga.Result, zadId, problemName, param1, param2, method);
                 SaveProblemParams<double>(zadId, problemName, 123, evaluation);
             }
-            else if (method == "lab6zad3")
+            else if (method.StartsWith("lab6zad3"))
             {
-                UtykanieGeneticAlgorithm<bool> ga = new UtykanieGeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed);
+                UtykanieGeneticAlgorithm<bool> ga = new UtykanieGeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed, method);
                 ga.Run();
 
                 ReportOptimizationResult(ga.Result);
@@ -158,6 +223,8 @@ namespace MetaheuristicsCS
             }
             else if (method.StartsWith("lab7zad3"))
             {
+                mutation = new BinaryBitFlipMutation(0.5 / evaluation.iSize, evaluation, seed);
+
                 //mutation = new BinaryBitFlipMutation(0, evaluation, seed);
 
                 DSMGeneticAlgorithm<bool> ga = new DSMGeneticAlgorithm<bool>(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize, seed);
@@ -254,16 +321,7 @@ namespace MetaheuristicsCS
             {
                 //Console.WriteLine($"Setting crossover and mutation to: P(C) = {param1}, P(M) = {param2}");
                 populationSize = 200;
-                stopCondition = new RunningTimeStopCondition(45); //new IterationsStopCondition(100); 
-                selection = new TournamentSelection(2, seed);
-            }
-
-
-            if (method == "lab6zad3")
-            {
-                //Console.WriteLine($"Setting crossover and mutation to: P(C) = {param1}, P(M) = {param2}");
-                populationSize = 200;
-                stopCondition = new RunningTimeStopCondition(45); //new IterationsStopCondition(100); 
+                stopCondition = new RunningTimeStopCondition(30); //new IterationsStopCondition(100); 
                 selection = new TournamentSelection(2, seed);
             }
 
@@ -362,7 +420,8 @@ namespace MetaheuristicsCS
 
         static void Raport2Lab5(int? seed, int n_samples)
         {
-            string[] methods= { "penalty", "lamarck", "baldwin" };
+            //string[] methods= { "baldwin", "lamarck", "penalty"};
+            string[] methods = { "penalty", "baldwin", "lamarck" };
             foreach (string method in methods)
             {
                 for (int i = 0; i < n_samples; i++)
@@ -385,17 +444,21 @@ namespace MetaheuristicsCS
 
         static void Raport2Lab6(int? seed, int n_samples)
         {
-            (int, int)[] configs = new[] { (4, 5), (4, 15), (20, 5) };//{ (10, 2), (10, 5), (10, 15) };
+            (int, int)[] configs = new[] { (4, 5), (4, 15), (20, 5), (20, 15) };//{ (10, 2), (10, 5), (10, 15) };
+            //string[] zadanie_1_config = { "lab6zad3_default", "lab6zad3_no_mutation", "lab6zad3_no_crossover", "lab6zad3_20pop", "lab6zad3_epictournament" };
 
-            double[] muts = { 0.0, 0.01, 0.1 };
-            foreach (var mutation in muts)
+            /*string[] zadanie_1_config = { "lab6zad3_no_mutation_low_population" };//{ "lab6zad3_default", "lab6zad3_no_mutation", "lab6zad3_no_crossover", "lab6zad3_10pop", "lab6zad3_moreepictournament" };
+            foreach (string conf in zadanie_1_config)
             {
-                for (int i = 0; i < n_samples; i++)
+                for (int i = 0; i<n_samples; i++)
                 {
-                    RunLab4Problems(seed, "lab6zad3", mutation, null);
+                    RunLab4Problems(seed, conf, null, null);
                 }
             }
+            */
+            
 
+            
             foreach (var config in configs)
             {
                 for (int i = 0; i < n_samples; i++)
@@ -403,6 +466,8 @@ namespace MetaheuristicsCS
                     RunLab4Problems(seed, "lab6zad3_island", config.Item1, config.Item2);
                 }
             }
+            
+            
 
         }
 
@@ -524,10 +589,10 @@ namespace MetaheuristicsCS
         private static void RunLab7_3Problems(int? seed, string method, double? param1, double? param2)
         {
             // TODO CHANGE STOP CONDITIONS, PROBS AND POPULATION SIZE BEFORE DOING EXPERIMENTS
-            var selection = new TournamentSelection(2, seed);
-            ACrossover crossover = new OnePointCrossover(0.5, seed);
-            var populationSize = 500;
-            IStopCondition stopCondition = new RunningTimeStopCondition(30); // FFE?
+            var selection = new TournamentSelection(8, seed);
+            ACrossover crossover = null;
+            var populationSize = 200;
+            IStopCondition stopCondition = new IterationsStopCondition(30); // FFE?
 
             if (method == "lab7zad3_onepoint")
             {
@@ -541,59 +606,47 @@ namespace MetaheuristicsCS
 
             if(method == "lab7zad3_DSM")
             {
-                crossover = new DSMCrossover(0.5, seed);
+                crossover = new DSMCrossover(0.9, seed);
             }
-            /*
-            if (method == "lab7zad2_onepoint")
+            if (method == "lab7zad3_DSM_2")
             {
-                crossover = new OnePointCrossover(0.5, seed);
+                crossover = new DSMCrossover(0.9, seed);
             }
-
-            if (method == "lab7zad2_uniform")
-            {
-                crossover = new UniformCrossover(0.5, seed);
-            }
-            */
 
             //Lab5(seed);
-            /*
+
             Lab7StandardDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7StandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7StandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7StandardDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+ 
+            Lab7RandomStandardDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab7RandomStandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            Lab7RandomStandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+
 
             Lab7BimodalDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7BimodalDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7BimodalDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7BimodalDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            */
-            Lab7RandomStandardDeceptiveConcatenation(3, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
+            
 
             Lab7RandomBimodalDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7RandomBimodalDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
             Lab7RandomBimodalDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomBimodalDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
         }
 
 
         static void Raport2Lab7_Zad3(int? seed, int n_samples)
         {
-            string[] methods = { "lab7zad3_DSM", "lab7zad3_onepoint", "lab7zad3_uniform" };
+            string[] methods = { "lab7zad3_uniform" };//"lab7zad3_DSM_2"};
 
-            foreach (string method in methods)
+            for (int j = 0; j< 1; j++)
             {
                 for (int i = 0; i < n_samples; i++)
                 {
-                    RunLab7_3Problems(seed, method, null, null);
+                    RunLab7_3Problems(seed, methods[j], null, j);
                 }
             }
         }
-
-
-
 
 
 
@@ -840,17 +893,16 @@ namespace MetaheuristicsCS
         static void Main(string[] args)
         {
             int? seed = null;
-            int n_samples = 3;
+            int n_samples = 10;
 
-            //Raport2Lab4_Zad1(seed, n_samples);
-            //Raport2Lab4_Zad2(seed, 2);
-            //Raport2Lab5(seed, n_samples);
+            Raport2Lab4_Zad1(seed, n_samples);
+            Raport2Lab4_Zad2(seed, 2);
+            
+            Raport2Lab5(seed, n_samples);
 
 
 
-            //Raport2Lab6(seed, n_samples);
-            //Raport2Lab7_Zad1(seed, n_samples);
-            //Raport2Lab7_Zad2(seed, n_samples);
+            Raport2Lab6(seed, n_samples);
             Raport2Lab7_Zad3(seed, n_samples);
             //Raport2Zad1(seed, n_samples);
             //Raport3Zad1(seed, n_samples);

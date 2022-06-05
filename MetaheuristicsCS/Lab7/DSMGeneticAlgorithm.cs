@@ -39,6 +39,7 @@ namespace Lab7
         protected double[,] DSM;
         int N_clusters;
         int MaxClusterSize;
+        private readonly UniformIntegerRandom pointRNG;
 
         public DSMGeneticAlgo(IEvaluation<Element, EvaluationResult> evaluation, IStopCondition stopCondition, AGenerator<Element> generator,
                                 ASelection<EvaluationResult> selection, ACrossover crossover, IMutation<Element> mutation, int populationSize,
@@ -53,7 +54,9 @@ namespace Lab7
             DSM = new double[evaluation.iSize, evaluation.iSize];
 
             N_clusters = 6;
-            MaxClusterSize = evaluation.iSize / 10;
+            MaxClusterSize = evaluation.iSize / 2;//10;
+
+            pointRNG = new UniformIntegerRandom(seed);
         }
 
         protected void PrintDSM()
@@ -96,7 +99,7 @@ namespace Lab7
 
             if (iterationNumber % 10 == 0)
             {
-                using (StreamWriter tw = File.CreateText(@"..\..\Results\" + $"DSM_{evaluation.GetType().Name}_{iterationNumber}.txt"))
+                using (StreamWriter tw = File.CreateText(@"..\..\Results\" + $"DSM_{evaluation.GetType().Name}_{evaluation.iSize}_{iterationNumber}_{crossover.GetType().Name}.txt"))
                 {
                     for (int i = 0; i < evaluation.iSize; i++)
                     {
@@ -114,8 +117,8 @@ namespace Lab7
 
         protected override bool RunIteration(long itertionNumber, DateTime startTime)
         {
-            Select();
             CalculateDSM(itertionNumber);
+            Select();
 
             if (crossover is DSMCrossover)
             {
@@ -198,57 +201,101 @@ namespace Lab7
 
         public List<int> GetCluster(int geneId, List<int> remainingGenes)
         {
-            //List<(int, double)>
             List<int> cluster = new List<int>();
-            var neighbours = DSM.GetRow(geneId).Select((v, i) => new { neighbourSimilarity = v, index = i }).OrderBy(x => x.neighbourSimilarity).ToList();
+            cluster.Add(geneId);
+            remainingGenes.Remove(geneId);
+            var neighbours = DSM.GetRow(geneId).Select((v, i) => new { neighbourSimilarity = v, index = i }).OrderByDescending(x => x.neighbourSimilarity).ToList();
 
             int index = 0;
             var neighbour = neighbours[index];
-            while (neighbour.neighbourSimilarity > 0.75 && cluster.Count < MaxClusterSize)
+
+            while (neighbour.neighbourSimilarity > 0.25 && cluster.Count < MaxClusterSize)
             {
-                while (!remainingGenes.Contains(neighbour.index))
+                if (cluster.Count > 1 && neighbour.index == cluster[0]) break;
+
+                while (!remainingGenes.Contains(neighbour.index) && index < neighbours.Count - 1)
                 {
                     index++;
                     neighbour = neighbours[index];
                 }
 
-                cluster.Add(neighbour.index);
-            }
+                if (index >= neighbours.Count) break;
 
+                cluster.Add(neighbour.index);
+                remainingGenes.Remove(neighbour.index);
+                neighbours = DSM.GetRow(neighbour.index).Select((v, i) => new { neighbourSimilarity = v, index = i }).OrderByDescending(x => x.neighbourSimilarity).ToList();
+                neighbour = neighbours[index];
+            }
+            if (cluster.Count > 1)Console.WriteLine("Dlugosc klastra: " + cluster.Count);
             return cluster;
         }
 
         protected bool DSMCross(List<Element> parent1, List<Element> parent2, List<Element> offspring1, List<Element> offspring2)
         {
-            int n_clusters = 6;
             List<int> remainingGenes = Utils.CreateIndexList(parent1.Count);
             shuffler.Shuffle(remainingGenes);
 
             List<List<int>> clusters = new List<List<int>>();
 
-            for (int i = 0; i < n_clusters; i++)
+            for (int i = 0; i < N_clusters; i++)
             {
+                if (remainingGenes.Count == 0) break;
                 int geneId = remainingGenes[0];
                 List<int> cluster = GetCluster(geneId, remainingGenes);
                 clusters.Add(cluster);
             }
 
-
-            int crossPoint = 50;
-
-            for (int i = 0; i < crossPoint; ++i)
+            if (clusters.Any(x => x.Count > 1))
             {
-                offspring1[i] = parent1[i];
-                offspring2[i] = parent2[i];
+                //Console.WriteLine("Woho!");
+                foreach (var cluster in clusters)
+                {
+                    if (pointRNG.Next(0, 2) == 1)
+                    {
+                        foreach (int geneId in cluster)
+                        {
+                            offspring1[geneId] = parent2[geneId];
+                            offspring2[geneId] = parent1[geneId];
+                        }
+                    }
+                    else
+                    {
+                        foreach (int geneId in cluster)
+                        {
+                            offspring1[geneId] = parent1[geneId];
+                            offspring2[geneId] = parent2[geneId];
+                        }
+                    }
+
+                }
+
+                return true;
             }
 
-            for (int i = crossPoint; i < parent1.Count; ++i)
+            else
             {
-                offspring1[i] = parent2[i];
-                offspring2[i] = parent1[i];
+                //Console.WriteLine("Not this time");
+                int crossPoint = pointRNG.Next(0, parent1.Count);
+
+                for (int i = 0; i < crossPoint; ++i)
+                {
+                    offspring1[i] = parent1[i];
+                    offspring2[i] = parent2[i];
+                }
+
+                for (int i = crossPoint; i < parent1.Count; ++i)
+                {
+                    offspring1[i] = parent2[i];
+                    offspring2[i] = parent1[i];
+                }
             }
 
             return true;
+            /*
+
+
+            return true;
+            */
         }
     }
         // from stack

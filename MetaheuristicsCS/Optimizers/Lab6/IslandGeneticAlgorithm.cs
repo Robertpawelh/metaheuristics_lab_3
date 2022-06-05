@@ -40,8 +40,10 @@ namespace Optimizers.Lab5
         protected int MigrationsFrequence;
         protected List<List<Individual<Element, EvaluationResult>>> populations;
 
-        private int noChangeCounter;
-        private double bestFitness;
+        protected int RealNoImprovementsCounter;
+        protected int NoImprovementsCounter;
+        protected double bestFitness;
+        protected int BestFoundOn;
 
         public IslandGeneticOptimizer(IEvaluation<Element, EvaluationResult> evaluation, IStopCondition stopCondition, AGenerator<Element> generator,
                                 ASelection<EvaluationResult> selection, ACrossover crossover, IMutation<Element> mutation, int n_populations, int populationSize,
@@ -80,8 +82,10 @@ namespace Optimizers.Lab5
                 Evaluate();
                 UpdateState();
 
-                noChangeCounter = 0;
+                NoImprovementsCounter = 0;
+                RealNoImprovementsCounter = 0;
                 bestFitness = population.Max(x => Convert.ToDouble(x.Fitness));
+                BestFoundOn = 0;
             }
         }
 
@@ -93,6 +97,8 @@ namespace Optimizers.Lab5
             {
                 RunIteration();
             }
+
+            SaveNoImprove();
         }
 
         public new void Initialize()
@@ -186,7 +192,7 @@ namespace Optimizers.Lab5
 
             if (!File.Exists(strFilePath))
             {
-                string header = "model;iteration;best;worst;mean";
+                string header = "method;iteration;best;worst;mean";
                 File.WriteAllText(strFilePath, header + Environment.NewLine);
             };
 
@@ -226,12 +232,14 @@ namespace Optimizers.Lab5
 
             if (bestFitness < maxx)
             {
-                noChangeCounter = 0;
+                NoImprovementsCounter = 0;
+                RealNoImprovementsCounter = 0;
                 bestFitness = maxx;
             }
             else 
             {
-                noChangeCounter++;
+                NoImprovementsCounter++;
+                RealNoImprovementsCounter++;
             }
 
             return UpdateState() || updated;
@@ -271,10 +279,10 @@ namespace Optimizers.Lab5
             List<Individual<Element, EvaluationResult>> travelers = new List<Individual<Element, EvaluationResult>>();
 
             //Console.WriteLine("HEHE" + iterationNumber);
-            if (noChangeCounter > MigrationsFrequence)
+            if (NoImprovementsCounter > MigrationsFrequence)
             //if ((iterationNumber + 1) % MigrationsFrequence == 0)
             {
-                noChangeCounter = 0;
+                NoImprovementsCounter = 0;
                 //Console.WriteLine(iterationNumber);
                 List<int> populationsToSendIndices = Utils.CreateIndexList(N_populations);
                 List<int> populationsToGetIndices = Utils.CreateIndexList(N_populations);
@@ -310,6 +318,27 @@ namespace Optimizers.Lab5
                     travelers.Add(traveler);
                 }
             }
+        }
+
+        public void SaveNoImprove()
+        {
+            string dset = evaluation.GetType().Name;
+            string strFilePath = @"..\..\Results\" + $"zad_63_{dset}_{evaluation.iSize}_utykanie_NO_IMPROVEMENT.csv";
+            string strSeperator = ";";
+
+            StringBuilder sbOutput = new StringBuilder();
+            sbOutput.Append($"island_{N_populations}_{MigrationsFrequence}");
+            sbOutput.Append(strSeperator + RealNoImprovementsCounter);
+            sbOutput.Append(strSeperator + BestFoundOn);
+            sbOutput.Append(strSeperator + bestFitness);
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "method;noImprovements;bestFoundOn;fitness";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
         }
     }
 }

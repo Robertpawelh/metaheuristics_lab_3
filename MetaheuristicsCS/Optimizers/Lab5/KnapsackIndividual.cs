@@ -80,19 +80,16 @@ namespace Optimizers.Lab5
 
         public double GetPenalty(CBinaryKnapsackEvaluation evaluation)
         {
-            List<bool> currentGenotype = new List<bool>(Genotype);
-
-            double currentCapacity = evaluation.dCalculateWeight(currentGenotype);
+            double currentCapacity = evaluation.dCalculateWeight(Genotype);
             double maxCapacity = evaluation.dCapacity;
 
             if (currentCapacity <= maxCapacity)
             {
                 return 0;
             }
-            double coefficient = 100;
-
+            double coefficient = Genotype.Count;
             double penalty = coefficient * (currentCapacity - maxCapacity);
-            
+
             return penalty;
         }
 
@@ -117,7 +114,6 @@ namespace Optimizers.Lab5
                 else if (evaluationMethod == "baldwin")
                 {
                     List<bool> fixedGenotype = GetOptimizedGenotype((CBinaryKnapsackEvaluation)evaluation);
-
                     Fitness = evaluation.tEvaluate(fixedGenotype);
 
                 }

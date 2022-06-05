@@ -21,9 +21,9 @@ namespace MetaheuristicsCS.Optimizers.Lab6
     {
         public UtykanieGeneticAlgorithm(IEvaluation<Element, double> evaluation, IStopCondition stopCondition, AGenerator<Element> generator,
                                 ASelection<double> selection, ACrossover crossover, IMutation<Element> mutation, int populationSize,
-                                int? seed = null)
+                                int? seed = null, string method="")
             : base(evaluation, stopCondition, generator, selection, crossover, mutation, populationSize,
-                   new OptimizationState<Element>(evaluation.tMaxValue), seed)
+                   new OptimizationState<Element>(evaluation.tMaxValue), seed, method)
         {
 
         }
@@ -35,11 +35,10 @@ namespace MetaheuristicsCS.Optimizers.Lab6
 
         protected List<int> indices;
         protected readonly Shuffler shuffler;
-
         public UtykanieGeneticAlgo(IEvaluation<Element, EvaluationResult> evaluation, IStopCondition stopCondition, AGenerator<Element> generator,
                                 ASelection<EvaluationResult> selection, ACrossover crossover, IMutation<Element> mutation, int populationSize,
-                                AOptimizationState<Element, EvaluationResult, OptimizationResult> state, int? seed = null)
-            : base(evaluation, stopCondition, generator, selection, mutation, populationSize, state)
+                                AOptimizationState<Element, EvaluationResult, OptimizationResult> state, int? seed = null, string method = "")
+            : base(evaluation, stopCondition, generator, selection, mutation, populationSize, state, method)
         {
             this.crossover = crossover;
 
@@ -60,6 +59,20 @@ namespace MetaheuristicsCS.Optimizers.Lab6
             Evaluate();
 
             SaveOverallFitness(itertionNumber);
+
+            var maxx = population.Max(x => Convert.ToDouble(x.Fitness));
+
+            if (bestFitness < maxx)
+            {
+                NoImprovementsCounter = 0;
+                bestFitness = maxx;
+                BestFoundOn = (int) itertionNumber;
+            }
+            else
+            {
+                NoImprovementsCounter++;
+            }
+
 
             return UpdateState() || updated;
         }
@@ -99,9 +112,15 @@ namespace MetaheuristicsCS.Optimizers.Lab6
         protected readonly int populationSize;
         protected List<Individual<Element, EvaluationResult>> population;
 
+        private string Method;
+
+        protected int NoImprovementsCounter;
+        protected double bestFitness;
+        protected int BestFoundOn;
+
         public UtykanieGeneticOptimizer(IEvaluation<Element, EvaluationResult> evaluation, IStopCondition stopCondition, AGenerator<Element> generator,
                                     ASelection<EvaluationResult> selection, IMutation<Element> mutation, int populationSize,
-                                    AOptimizationState<Element, EvaluationResult, OptimizationResult> state)
+                                    AOptimizationState<Element, EvaluationResult, OptimizationResult> state, string method)
             : base(evaluation, stopCondition, state)
         {
             this.generator = generator;
@@ -110,10 +129,14 @@ namespace MetaheuristicsCS.Optimizers.Lab6
 
             this.populationSize = populationSize;
             population = new List<Individual<Element, EvaluationResult>>();
+
+            Method = method;
         }
 
         protected override sealed void Initialize(DateTime startTime)
         {
+            NoImprovementsCounter = 0;
+            BestFoundOn = 0;
             population.Clear();
             for (int i = 0; i < populationSize; ++i)
             {
@@ -122,6 +145,8 @@ namespace MetaheuristicsCS.Optimizers.Lab6
 
             Evaluate();
             UpdateState();
+
+            bestFitness = population.Max(x => Convert.ToDouble(x.Fitness));
         }
 
         protected void Evaluate()
@@ -169,8 +194,8 @@ namespace MetaheuristicsCS.Optimizers.Lab6
 
         protected void SaveOverallFitness(long itertionNumber)
         {
-            string method = evaluation.GetType().Name;
-            string strFilePath = @"..\..\Results\" + $"zad_63_{method}_{evaluation.iSize}_utykanie.csv";
+            string dset = evaluation.GetType().Name;
+            string strFilePath = @"..\..\Results\" + $"zad_63_{dset}_{evaluation.iSize}_utykanie.csv";
             string strSeperator = ";";
             StringBuilder sbOutput = new StringBuilder();
 
@@ -183,7 +208,7 @@ namespace MetaheuristicsCS.Optimizers.Lab6
                 mean += population.Average(x => Convert.ToDouble(x.Fitness));
                 worst += population.Min(x => Convert.ToDouble(x.Fitness));
 
-                sbOutput.Append($"genetic_{mutation.Probability}");
+                sbOutput.Append(Method);
                 sbOutput.Append(strSeperator + itertionNumber);
                 sbOutput.Append(strSeperator + best);
                 sbOutput.Append(strSeperator + worst);
@@ -202,6 +227,40 @@ namespace MetaheuristicsCS.Optimizers.Lab6
 
                 File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
             }
+        }
+
+        public void SaveNoImprove()
+        {
+            string dset = evaluation.GetType().Name;
+            string strFilePath = @"..\..\Results\" + $"zad_63_{dset}_{evaluation.iSize}_utykanie_NO_IMPROVEMENT.csv";
+            string strSeperator = ";";
+
+            StringBuilder sbOutput = new StringBuilder();
+
+            sbOutput.Append(Method);
+            sbOutput.Append(strSeperator + NoImprovementsCounter);
+            sbOutput.Append(strSeperator + BestFoundOn);
+            sbOutput.Append(strSeperator + bestFitness);
+
+            if (!File.Exists(strFilePath))
+            {
+                string header = "method;noImprovements;bestFoundOn;fitness";
+                File.WriteAllText(strFilePath, header + Environment.NewLine);
+            };
+
+            File.AppendAllText(strFilePath, sbOutput.ToString() + Environment.NewLine);
+        }
+
+        public void Run()
+        {
+            Initialize();
+
+            while (!ShouldStop())
+            {
+                RunIteration();
+            }
+
+            SaveNoImprove();
         }
     }
 
