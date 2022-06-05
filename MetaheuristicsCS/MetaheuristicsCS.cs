@@ -431,23 +431,10 @@ namespace MetaheuristicsCS
             }
         }
 
-        static void Raport2Lab6_1(int? seed, int n_samples)
-        {
-            (int, int)[] configs = new[] { (4, 5), (4, 15) };//{ (10, 2), (10, 5), (10, 15) };
-
-
-            for (int i = 0; i < n_samples; i++)
-            {
-                RunLab4Problems(seed, "lab6_1_utykanie", null, null);
-            }
-        }
-
         static void Raport2Lab6(int? seed, int n_samples)
         {
-            (int, int)[] configs = new[] { (4, 5), (4, 15), (20, 5), (20, 15) };//{ (10, 2), (10, 5), (10, 15) };
-            //string[] zadanie_1_config = { "lab6zad3_default", "lab6zad3_no_mutation", "lab6zad3_no_crossover", "lab6zad3_20pop", "lab6zad3_epictournament" };
-
-            /*string[] zadanie_1_config = { "lab6zad3_no_mutation_low_population" };//{ "lab6zad3_default", "lab6zad3_no_mutation", "lab6zad3_no_crossover", "lab6zad3_10pop", "lab6zad3_moreepictournament" };
+            (int, int)[] configs = new[] { (4, 5), (4, 15), (20, 5), (20, 15) };
+            string[] zadanie_1_config = { "lab6zad3_no_mutation_low_population", "lab6zad3_default", "lab6zad3_no_mutation", "lab6zad3_no_crossover", "lab6zad3_10pop", "lab6zad3_20pop", "lab6zad3_epictournament", "lab6zad3_moreepictournament" };
             foreach (string conf in zadanie_1_config)
             {
                 for (int i = 0; i<n_samples; i++)
@@ -455,7 +442,6 @@ namespace MetaheuristicsCS
                     RunLab4Problems(seed, conf, null, null);
                 }
             }
-            */
             
 
             
@@ -470,7 +456,6 @@ namespace MetaheuristicsCS
             
 
         }
-
 
 
         private static void Lab7BimodalDeceptiveConcatenation(int n_functions, int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
@@ -493,96 +478,6 @@ namespace MetaheuristicsCS
         private static void Lab7RandomStandardDeceptiveConcatenation(int n_functions, int? seed, IStopCondition stopCondition, int populationSize, ASelection<double> selection, ACrossover crossover, string method, double? param1, double? param2)
         {
             Lab4BinaryGA(new RandomBinaryStandardDeceptiveConcatenationEvaluation(3, n_functions, seed), stopCondition, populationSize, selection, crossover, seed, method, n_functions, param2, "RandomStandardConcatenation");
-        }
-
-        private static void RunLab7_1Problems(int? seed, string method, double? param1, double? param2)
-        {
-            // TODO CHANGE STOP CONDITIONS, PROBS AND POPULATION SIZE BEFORE DOING EXPERIMENTS
-            var selection = new TournamentSelection(2, seed);
-            ACrossover crossover = new OnePointCrossover(0.5, seed);
-            var populationSize = 500;
-            IStopCondition stopCondition = new RunningTimeStopCondition(30); // FFE?
-
-
-            if (method == "lab7zad1_onepoint")
-            {
-                crossover = new OnePointCrossover(0.5, seed);
-            }
-
-            if (method == "lab7zad1_uniform")
-            {
-                crossover = new UniformCrossover(0.5, seed);
-            }
-
-            //Lab5(seed);
-            Lab7StandardDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7StandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7StandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7StandardDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-
-            Lab7BimodalDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7BimodalDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7BimodalDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7BimodalDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-        }
-
-        private static void RunLab7_2Problems(int? seed, string method, double? param1, double? param2)
-        {
-            // TODO CHANGE STOP CONDITIONS, PROBS AND POPULATION SIZE BEFORE DOING EXPERIMENTS
-            var selection = new TournamentSelection(2, seed);
-            ACrossover crossover = new OnePointCrossover(0.5, seed);
-            var populationSize = 500;
-            IStopCondition stopCondition = new RunningTimeStopCondition(30); // FFE?
-
-
-            if (method == "lab7zad2_onepoint")
-            {
-                crossover = new OnePointCrossover(0.5, seed);
-            }
-
-            if (method == "lab7zad2_uniform")
-            {
-                crossover = new UniformCrossover(0.5, seed);
-            }
-
-            //Lab5(seed);
-            Lab7RandomStandardDeceptiveConcatenation(3, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomStandardDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-
-            Lab7RandomBimodalDeceptiveConcatenation(10, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomBimodalDeceptiveConcatenation(50, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomBimodalDeceptiveConcatenation(100, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-            Lab7RandomBimodalDeceptiveConcatenation(200, seed, stopCondition, populationSize, selection, crossover, method, param1, param2);
-        }
-
-
-
-        static void Raport2Lab7_Zad1(int? seed, int n_samples)
-        {
-            string[] methods = { "lab7zad1_onepoint", "lab7zad1_uniform" };
-
-            foreach (string method in methods)
-            {
-                for (int i = 0; i < n_samples; i++)
-                {
-                    RunLab7_1Problems(seed, method, null, null);
-                }
-            }
-        }
-
-        static void Raport2Lab7_Zad2(int? seed, int n_samples)
-        {
-            string[] methods = { "lab7zad2_onepoint", "lab7zad2_uniform" };
-
-            foreach (string method in methods)
-            {
-                for (int i = 0; i < n_samples; i++)
-                {
-                    RunLab7_2Problems(seed, method, null, null);
-                }
-            }
         }
 
 
@@ -635,9 +530,9 @@ namespace MetaheuristicsCS
         }
 
 
-        static void Raport2Lab7_Zad3(int? seed, int n_samples)
+        static void Raport2Lab7(int? seed, int n_samples)
         {
-            string[] methods = { "lab7zad3_uniform" };//"lab7zad3_DSM_2"};
+            string[] methods = { "lab7zad3_uniform", "lab7zad3_onepoint", "lab7zad3_DSM_2" };
 
             for (int j = 0; j< 1; j++)
             {
@@ -903,7 +798,7 @@ namespace MetaheuristicsCS
 
 
             Raport2Lab6(seed, n_samples);
-            Raport2Lab7_Zad3(seed, n_samples);
+            Raport2Lab7(seed, n_samples);
             //Raport2Zad1(seed, n_samples);
             //Raport3Zad1(seed, n_samples);
 
