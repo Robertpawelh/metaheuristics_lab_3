@@ -9,6 +9,7 @@ using EvaluationsCLI;
 using Generators;
 using Lab7;
 using MetaheuristicsCS.Lab7;
+using MetaheuristicsCS.Lab9;
 using MetaheuristicsCS.Optimizers.BiObjective.Lista8;
 using MetaheuristicsCS.Optimizers.Lab6;
 using Mutations;
@@ -607,52 +608,6 @@ namespace MetaheuristicsCS
             Console.WriteLine("\tlast update (FFE): {0}", optimizationResult.LastUpdateFFE);
         }
 
-        private static void Lab9NSGA2(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed, string method, string problemName)
-        {
-            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5); // TODO: "wiarygodne kryterium zatrzymania"
-
-            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
-
-            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
-            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
-            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
-            SampleBiObjectiveSelection selection = new SampleBiObjectiveSelection(dominationComparer, seed);
-
-            BiObjective.NSGA2.NSGA2<bool> nsga2 = new BiObjective.NSGA2.NSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, 
-                                                                                    crossover, mutation, 100, seed);
-
-            nsga2.Run();
-
-            ReportBiObjectiveOptimizationResult(nsga2.Result);
-            SaveOptimizationResult(nsga2.Result, 1, problemName, 123, method);
-            SaveProblemParams<double>(1, problemName, 123, evaluation);
-        }
-
-        private static void Lab9ZeroMaxOneMax(int? seed)
-        {
-            Lab9NSGA2(new CBinaryZeroMaxOneMaxEvaluation(10), seed, "default", "ZeroMaxOneMax");
-        }
-
-        private static void Lab9Trap5InvTrap5(int? seed)
-        {
-            Lab9NSGA2(new CBinaryTrapInvTrapEvaluation(5, 10), seed, "default", "Trap5InvTrap5");
-        }
-
-        private static void Lab9LOTZ(int? seed)
-        {
-            Lab9NSGA2(new CBinaryLOTZEvaluation(10), seed, "default", "LOTZ");
-        }
-
-        private static void Lab9MOMaxCut(int? seed)
-        {
-            Lab9NSGA2(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed, "default", "MOMaxCut");
-        }
-
-        private static void Lab9MOKnapsack(int? seed)
-        {
-            Lab9NSGA2(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed, "default", "MOKnapSack");
-        }
-
         private static void Lab8BiObjectiveBinaryGA(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed, string method, string problemName)
         {
             RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(5);
@@ -757,6 +712,119 @@ namespace MetaheuristicsCS
             Lab8MOKnapsack(seed, method);
         }
 
+
+        private static void Lab9NSGA2(IEvaluation<bool, Tuple<double, double>> evaluation, int? seed, string method, string problemName)
+        {
+            RunningTimeStopCondition stopCondition = new RunningTimeStopCondition(10);
+
+            DefaultDominationComparer dominationComparer = new DefaultDominationComparer();
+
+            BinaryRandomGenerator generator = new BinaryRandomGenerator(evaluation.pcConstraint, seed);
+            ASelection<Tuple<double, double>> selection = new NSGA2Selection(2, evaluation.tMaxValue, dominationComparer, true, seed);
+            OnePointCrossover crossover = new OnePointCrossover(0.5, seed);
+            BinaryBitFlipMutation mutation = new BinaryBitFlipMutation(1.0 / evaluation.iSize, evaluation, seed);
+
+            //SampleBiObjectiveSelection selection = new SampleBiObjectiveSelection(dominationComparer, seed);
+
+            if (method == "vector_clusters")
+            {
+                ImprovedNSGA2<bool> nsga2 = new ImprovedNSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, selection,
+                                                                        crossover, mutation, 200, seed);
+
+                nsga2.Run();
+
+                ReportBiObjectiveOptimizationResult(nsga2.Result);
+                SaveOptimizationResult(nsga2.Result, 9, problemName, 123, method);
+                SaveProblemParams<double>(9, problemName, 123, evaluation);
+            }
+            else if (method == "vector_clusters_and_skrajni")
+            {
+                selection = new SkrajniSelection(dominationComparer, seed);
+                ImprovedNSGA2<bool> nsga2 = new ImprovedNSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, selection,
+                                                        crossover, mutation, 200, seed);
+
+                nsga2.Run();
+
+                ReportBiObjectiveOptimizationResult(nsga2.Result);
+                SaveOptimizationResult(nsga2.Result, 9, problemName, 123, method);
+                SaveProblemParams<double>(9, problemName, 123, evaluation);
+            }
+            else if (method == "vector_clusters_and_skrajni_mniej")
+            {
+                selection = new SkrajniSelection(dominationComparer, seed);
+                ImprovedNSGA2<bool> nsga2 = new ImprovedNSGA2<bool>(evaluation, stopCondition, generator, dominationComparer, selection,
+                                                        crossover, mutation, 200, seed);
+
+                nsga2.Run();
+
+                ReportBiObjectiveOptimizationResult(nsga2.Result);
+                SaveOptimizationResult(nsga2.Result, 9, problemName, 123, method);
+                SaveProblemParams<double>(9, problemName, 123, evaluation);
+            }
+            else
+            {
+                BiObjective.NSGA2.NSGA2<bool> nsga2 = new BiObjective.NSGA2.NSGA2<bool>(evaluation, stopCondition, generator, dominationComparer,
+                                                                                        crossover, mutation, 200, seed);
+
+                nsga2.Run();
+
+                ReportBiObjectiveOptimizationResult(nsga2.Result);
+                SaveOptimizationResult(nsga2.Result, 9, problemName, 123, method);
+                SaveProblemParams<double>(9, problemName, 123, evaluation);
+            }
+
+        }
+
+        private static void RunLab9Problems(int? seed, string method)
+        {
+
+            Lab9ZeroMaxOneMax(seed, method);
+            Lab9Trap5InvTrap5(seed, method);
+            Lab9LOTZ(seed, method);
+            Lab9MOMaxCut(seed, method);
+            Lab9MOKnapsack(seed, method);
+        }
+
+        private static void Lab9ZeroMaxOneMax(int? seed, string method)
+        {
+            Lab9NSGA2(new CBinaryZeroMaxOneMaxEvaluation(10), seed, method, "ZeroMaxOneMax");
+        }
+
+        private static void Lab9Trap5InvTrap5(int? seed, string method)
+        {
+            Lab9NSGA2(new CBinaryTrapInvTrapEvaluation(5, 10), seed, method, "Trap5InvTrap5");
+        }
+
+        private static void Lab9LOTZ(int? seed, string method)
+        {
+            Lab9NSGA2(new CBinaryLOTZEvaluation(10), seed, method, "LOTZ");
+        }
+
+        private static void Lab9MOMaxCut(int? seed, string method)
+        {
+            Lab9NSGA2(new CBinaryMOMaxCutEvaluation(EBinaryBiObjectiveMaxCutInstance.maxcut_instance_6), seed, method, "MOMaxCut");
+        }
+
+        private static void Lab9MOKnapsack(int? seed, string method)
+        {
+            Lab9NSGA2(new CBinaryMOKnapsackEvaluation(EBinaryBiObjectiveKnapsackInstance.knapsack_100), seed, method, "MOKnapSack");
+        }
+
+        static void Raport3Lab2(int? seed, int n_samples)
+        {
+
+            string[] config = { "vector_clusters", "vector_clusters_and_skrajni", "default" }; //, ;//, "default3" }; // "skrajni2_turniej", "skrajni1_turniej", 
+
+            for (int i = 0; i < n_samples; i++)
+            {
+                foreach (string conf in config)
+                {
+                    RunLab9Problems(seed, conf);
+                }
+            }
+        }
+
+
         static void Raport3Zad1(int? seed, int n_samples)
         {
             //(string, int)[] config = new[] { ("default", 0), ("1_5_success", 5), ("1_5_success", 25), ("1_5_success", 50), ("dziedzina_adaptation", 10) };
@@ -788,8 +856,9 @@ namespace MetaheuristicsCS
         static void Main(string[] args)
         {
             int? seed = null;
-            int n_samples = 10;
+            int n_samples = 4;
 
+            /*
             Raport2Lab4_Zad1(seed, n_samples);
             Raport2Lab4_Zad2(seed, 2);
             
@@ -799,9 +868,11 @@ namespace MetaheuristicsCS
 
             Raport2Lab6(seed, n_samples);
             Raport2Lab7(seed, n_samples);
+            */
             //Raport2Zad1(seed, n_samples);
             //Raport3Zad1(seed, n_samples);
-
+            Raport3Lab2(seed, n_samples);
+            //Raport3Zad2(seed, n_samples);
             //Lab5(seed);
 
             Console.ReadKey();

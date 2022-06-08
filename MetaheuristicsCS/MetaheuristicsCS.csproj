@@ -84,6 +84,7 @@
     <Compile Include="Lab7\DSMGeneticAlgorithm.cs" />
     <Compile Include="Lab7\RandomBinaryBimodalDeceptiveConcatenationEvaluation.cs" />
     <Compile Include="Lab7\RandomBinaryStandardDeceptiveConcatenationEvaluation.cs" />
+    <Compile Include="Lab9\Lab9GeneticAlgorithm.cs" />
     <Compile Include="MetaheuristicsCS.cs" />
     <Compile Include="Mutations\ARandomMutation.cs" />
     <Compile Include="Mutations\EvolutionaryStrategy11\ARealMutationES11Adaptation.cs" />
