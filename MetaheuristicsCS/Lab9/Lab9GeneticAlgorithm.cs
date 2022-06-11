@@ -50,8 +50,8 @@ namespace MetaheuristicsCS.Lab9
 
         public override void Crossover()
         {
-            int nClusters = 12;
-            int min_clusters = 5;
+            int nClusters = 10;
+            int min_clusters = 4;
             double extremeAngle = 90 / nClusters;
 
             List<List<Individual<Element, Tuple<double, double>>>> clusters = new List<List<Individual<Element, Tuple<double, double>>>>();
@@ -65,7 +65,7 @@ namespace MetaheuristicsCS.Lab9
            
             while (nClusters > min_clusters && clusters.Any(x => x.Count > 4 * (populationSize / nClusters)))
             {
-                nClusters -= 2;
+                nClusters -= 1;
 
                 clusters.Clear();
 
@@ -77,18 +77,9 @@ namespace MetaheuristicsCS.Lab9
                 aloneBoys.Clear();
             }
 
-            /*
-            Console.WriteLine($"ROZMIAR: {clusters.Count}");
-            foreach (var clust in clusters)
-            {
-                Console.WriteLine(clust.Count);
-            }
-            Console.WriteLine();
-            */
-
             if (nClusters < min_clusters)
             {
-                Console.WriteLine("Stara metoda");
+                //Console.WriteLine("Stara metoda");
                 shuffler.Shuffle(indices);
 
                 for (int i = 0; i < population.Count - 1; i += 2)
@@ -111,7 +102,39 @@ namespace MetaheuristicsCS.Lab9
             }
             else
             {
-                Console.WriteLine($"Nowa, {clusters.Count} klastrow");
+                //Console.WriteLine($"Nowa, {clusters.Count} klastrow");
+
+                foreach (var cluster in clusters)
+                {
+                    shuffler.Shuffle(cluster);
+                }
+
+                List<int> clusterIndices = Utility.Utils.CreateIndexList(clusters.Count);
+                shuffler.Shuffle(clusterIndices);
+                for(int j = 0; j < clusters.Count; j++)
+                {
+                    var peopleToMigrate = clusters[j].Take(clusters[j].Count * 10 / 100).ToList();
+                    var clusterToGet = clusters[0];
+                    if (clusterIndices.Count > 1 && clusterToGet == clusters[j])
+                    {
+                        clusterToGet = clusters[1];
+                        clusterIndices.Remove(0);
+                    }
+                    else
+                    {
+                        clusterIndices.Remove(1);
+                    }
+                    clusterToGet.AddRange(peopleToMigrate);
+                    for(int jj = 0; jj < peopleToMigrate.Count(); jj++)
+                    {
+                        clusters[j].Remove(peopleToMigrate[jj]);
+                    }
+                }
+                
+                
+                
+                
+                
                 foreach (var cluster in clusters)
                 {
                     shuffler.Shuffle(cluster);
